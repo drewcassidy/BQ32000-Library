@@ -27,3 +27,12 @@
 *.exe
 *.out
 *.app
+
+# Platformio
+.pioenvs
+.piolibdeps
+
+# CMake
+CMakeLists.txt
+CMakeListsPrivate.txt
+cmake-build-debug/
