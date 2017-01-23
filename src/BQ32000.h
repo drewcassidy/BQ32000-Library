@@ -20,14 +20,14 @@
 #include <mbed.h>
 #include <stdint.h>
 
+#define BQ32000_ADDR 0xD0
+
 /**
  * @brief API for using the Texas Instruments BQ32000 Real Time Clock
  */
 class BQ32000 {
 public:
-    const uint8_t Address = 0xD0;
-
-    enum Register : uint8_t {
+    enum Register {
         REG_Seconds   = 0x00,
         REG_Minutes   = 0x01,
         REG_CentHours = 0x02,
@@ -43,7 +43,7 @@ public:
         REG_SFR       = 0x22
     };
 
-    enum DayOfWeek : uint8_t {
+    enum DayOfWeek {
         DAY_None,
         DAY_Sunday,
         DAY_Monday,
@@ -65,19 +65,45 @@ public:
     /**
      * @brief Writes a byte to a register
      *
-     * @param reg Register to write to
-     * @param data data to write
+     * @param reg register to write to
+     * @param val data to write
      */
-    void write_byte(Register reg, uint8_t data);
+    void write_byte(Register reg, uint8_t val);
+
+    /**
+     * @brief Writes a byte to a register
+     *
+     * @param reg pointer to register to write to
+     * @param val pointer to write from
+     */
+    void write_byte(Register *reg, uint8_t *val);
 
     /**
      * @brief Reads a byte from a register
      *
-     * @param reg Register to read from
+     * @param reg register to read from
      *
      * @return register's value
      */
     uint8_t read_byte(Register reg);
+
+    /**
+     * @brief Reads a byte from a register
+     *
+     * @param reg pointer to register to read from
+     * @param val pointer to read into
+     */
+    void read_byte(Register *reg, uint8_t *val);
+
+    /**
+     * @brief starts the RTC
+     */
+    void start();
+
+    /**
+     * @brief stops the RTC
+     */
+    void stop();
 
     /**
      * @brief gets the number of seconds since the last minute
@@ -123,40 +149,64 @@ public:
     uint8_t get_month();
 
     /**
-     * @brief gets the last two digits of the current year
-     * @details returns the last two digits of the year. eg. 2017 becomes '17'
+     * @brief gets last 2 digits of the current year
      *
      * @return year
      */
-    uint8_t get_year_short();
+    uint8_t get_year();
 
     /**
-     * @brief gets the current year
+     * @brief sets the seconds value of the RTC
      *
-     * @return year
+     * @param seconds seconds
      */
-    uint16_t get_year();
-
     void set_seconds(uint8_t seconds);
 
+    /**
+     * @brief sets the minutes value of the RTC
+     *
+     * @param minutes minutes
+     */
     void set_minutes(uint8_t minutes);
 
+    /**
+     * @brief sets the hours value of the RTC
+     *
+     * @param hours hours
+     */
     void set_hours(uint8_t hours);
 
+    /**
+     * @brief sets the current date on the RTC
+     *
+     * @param date current date
+     */
     void set_date(uint8_t date);
 
+    /**
+     * @brief sets the day of the week on the RTC
+     *
+     * @param day day of the week (see above)
+     */
     void set_day(DayOfWeek day);
 
+    /**
+     * @brief sets the current month on the RTC
+     * @details 1 = january, 2 = february, etc.
+     *
+     * @param month current month
+     */
     void set_month(uint8_t month);
 
+    /**
+     * @brief sets the current year on the RTC
+     *
+     * @param year current year
+     */
     void set_year(uint16_t year);
 
 private:
     I2C *_bus;
-
-    uint16_t _base_century = 2000; //shouldnt be relevent until the year 2100
-
-    uint16_t get_century();
 };
 
 #endif //BQ32000_H
