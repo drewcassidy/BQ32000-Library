@@ -54,6 +54,22 @@ public:
         DAY_Saturday
     };
 
+    struct bq32000_registers {
+        uint8_t seconds;
+        uint8_t  minutes;
+        uint8_t cent_hours;
+        DayOfWeek day;
+        uint8_t date;
+        uint8_t month;
+        uint8_t year;
+        uint8_t config_1;
+        uint8_t trickle_enable;
+        uint8_t config_2;
+        uint8_t sf_key_1;
+        uint8_t sf_key_2;
+        uint8_t sf_enable;
+    };
+
     /**
      * @brief Creates a new instance of the BQ32000
      *
@@ -63,37 +79,14 @@ public:
     BQ32000(PinName sda, PinName scl);
 
     /**
-     * @brief Writes a byte to a register
-     *
-     * @param reg register to write to
-     * @param val data to write
+     * @brief writes the buffer's contents to the chip's memory
      */
-    void write_byte(Register reg, uint8_t val);
+    void write_buffer();
 
     /**
-     * @brief Writes a byte to a register
-     *
-     * @param reg pointer to register to write to
-     * @param val pointer to write from
+     * @brief reads the chip's memory into the buffer
      */
-    void write_byte(Register *reg, uint8_t *val);
-
-    /**
-     * @brief Reads a byte from a register
-     *
-     * @param reg register to read from
-     *
-     * @return register's value
-     */
-    uint8_t read_byte(Register reg);
-
-    /**
-     * @brief Reads a byte from a register
-     *
-     * @param reg pointer to register to read from
-     * @param val pointer to read into
-     */
-    void read_byte(Register *reg, uint8_t *val);
+    void read_buffer();
 
     /**
      * @brief starts the RTC
@@ -207,6 +200,8 @@ public:
 
 private:
     I2C *_bus;
+    uint8_t *_data;
+    bq32000_registers *_buffer;
 };
 
 #endif //BQ32000_H
