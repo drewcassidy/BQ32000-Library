@@ -18,9 +18,8 @@
 
 BQ32000::BQ32000(PinName sda, PinName scl) {
     _bus    = new I2C(sda, scl);
-    _data   = (uint8_t *) malloc(sizeof(bq32000_registers) + 1);
+    _data   = (uint8_t *) calloc(sizeof(bq32000_registers) + 1, 1);
     _buffer = (bq32000_registers *) (_data + 1);
-    memset(_data, 0, sizeof(bq32000_registers) + 1);
 
     start();
 }
