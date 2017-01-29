@@ -61,7 +61,7 @@ uint8_t BQ32000::get_hours() {
 }
 
 BQ32000::DayOfWeek BQ32000::get_day() {
-    return (DayOfWeek) _buffer->day & 0x7;
+    return (DayOfWeek) (_buffer->day & 0x7);
 }
 
 uint8_t BQ32000::get_date() {
