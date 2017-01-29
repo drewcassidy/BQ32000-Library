@@ -22,7 +22,8 @@ BQ32000::BQ32000(PinName sda, PinName scl) {
 }
 
 void BQ32000::write_byte(Register reg, uint8_t val) {
-    write_byte(&reg, &val);
+    char vals[2] = {reg, val};
+    _bus->write(BQ32000_ADDR, vals, 2, true);
 }
 
 void BQ32000::write_byte(Register *reg, uint8_t *val) {
@@ -31,15 +32,15 @@ void BQ32000::write_byte(Register *reg, uint8_t *val) {
 }
 
 uint8_t BQ32000::read_byte(Register reg) {
-    uint8_t *val;
-    read_byte(&reg, val);
+    uint8_t val;
+    read_byte(&reg, &val);
 
-    return *val;
+    return val;
 }
 
 void BQ32000::read_byte(Register *reg, uint8_t *val) {
-    _bus->write(BQ32000_ADDR, (char *) reg, 1, true);
-    _bus->read(BQ32000_ADDR, (char *) val, 1, false);
+    _bus->write(BQ32000_ADDR, (char *) reg, 1);
+    _bus->read(BQ32000_ADDR, (char *) val, 1);
 }
 
 void BQ32000::start() {
@@ -110,7 +111,7 @@ void BQ32000::set_seconds(uint8_t seconds) {
 }
 
 void BQ32000::set_minutes(uint8_t minutes) {
-    uint8_t byte       = read_byte(REG_Minutes);
+    uint8_t byte;
     uint8_t minutes_10 = (minutes / 10) & 0x7;
     uint8_t minutes_1  = (minutes % 10) & 0xF;
     byte &= 0x80;
@@ -119,10 +120,9 @@ void BQ32000::set_minutes(uint8_t minutes) {
 }
 
 void BQ32000::set_hours(uint8_t hours) {
-    uint8_t byte     = read_byte(REG_CentHours);
+    uint8_t byte;
     uint8_t hours_10 = (hours / 10) & 0x3;
     uint8_t hours_1  = (hours % 10) & 0xF;
-    byte &= 0xC0;
     byte |= (hours_10 << 4) | hours_1;
     write_byte(REG_CentHours, byte);
 }
